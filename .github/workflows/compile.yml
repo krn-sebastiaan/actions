@@ -2,7 +2,7 @@ on:
   workflow_call:
     inputs:
       krn-core-version:
-        default: 0.4.0+20240126-1532
+        default: 0.4.0+20240221-0755
         required: false
         type: string
       build-xml-path:
