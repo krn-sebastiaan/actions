@@ -17,6 +17,10 @@ on:
         default: ${{ github.event.repository.name }}
         required: false
         type: string
+      krn-core-repository-url:
+        default: ''
+        required: false
+        type: string
 
 jobs:
   compile:
@@ -31,6 +35,7 @@ jobs:
         with:
           gpg-passphrase: ${{ secrets.GPG_PASSPHRASE }}
           krn-core-version: ${{ inputs.krn-core-version }}
+          krn-core-repository-url: ${{ inputs.krn-core-repository-url }}
       - name: Create mMojo
         env:
           KRN_CORE_LOCATION: /opt/smallworld/krn_core-${{ inputs.krn-core-version }}
