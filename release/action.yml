@@ -1,0 +1,50 @@
+name: mMojo release
+description: compile a Smallworld product into a mMojo and release it
+author: krn-sebastiaan
+branding:
+  icon: package
+  color: blue
+
+inputs:
+  krn-core-version:
+    default: 0.4.0+20240221-0755
+    required: false
+    type: string
+  build-xml-path:
+    default: build.xml
+    required: false
+    type: string
+  build-arguments:
+    default: ''
+    required: false
+    type: string
+  mmojo-name:
+    default: ${{ github.event.repository.name }}
+    required: false
+    type: string
+  krn-core-repository-url:
+    default: ''
+    required: false
+    type: string
+  gpg-passphrase:
+    required: true
+    type: string
+
+runs:
+  using: composite
+  steps:
+    - name: Compile
+      uses: krn-sebastiaan/mmojo-workflows/compile@main
+      with:
+        krn-core-version: ${{ inputs.krn-core-version }}
+        build-xml-path: ${{ inputs.build-xml-path }}
+        build-arguments: ${{ inputs.build-arguments }}
+        mmojo-name: ${{ inputs.mmojo-name }}
+        krn-core-repository-url: ${{ inputs.krn-core-repository-url }}
+        gpg-passphrase: ${{ inputs.gpg-passphrase }}
+    - name: Download mMojo
+      uses: actions/download-artifact@v4
+    - name: Release mMojo
+      uses: softprops/action-gh-release@master
+      with:
+        files: ${{ inputs.mmojo-name }}/*
