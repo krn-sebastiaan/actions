@@ -34,7 +34,7 @@ runs:
   using: composite
   steps:
     - name: Compile
-      uses: krn-sebastiaan/mmojo-workflows/compile@main
+      uses: krn-sebastiaan/actions/compile@main
       with:
         krn-core-version: ${{ inputs.krn-core-version }}
         build-xml-path: ${{ inputs.build-xml-path }}
