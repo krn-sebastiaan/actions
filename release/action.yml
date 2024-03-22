@@ -47,4 +47,4 @@ runs:
     - name: Release mMojo
       uses: softprops/action-gh-release@master
       with:
-        files: ${{ inputs.mmojo-name }}/*
+        files: ${{ inputs.mmojo-name }}/*.jar
