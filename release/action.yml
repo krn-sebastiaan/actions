@@ -29,6 +29,10 @@ inputs:
   gpg-passphrase:
     required: true
     type: string
+  tag-name:
+    default: ${{ github.ref }}
+    required: false
+    type: string
 
 runs:
   using: composite
@@ -45,6 +49,7 @@ runs:
     - name: Download mMojo
       uses: actions/download-artifact@v4
     - name: Release mMojo
-      uses: softprops/action-gh-release@master
+      uses: softprops/action-gh-release@v2
       with:
         files: ${{ inputs.mmojo-name }}/*.jar
+        tag_name: ${{ inputs.tag-name }}
