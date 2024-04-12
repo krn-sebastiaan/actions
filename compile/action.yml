@@ -47,8 +47,6 @@ runs:
       run: ant -f ${{ inputs.build-xml-path }} make_mojo ${{ inputs.build-arguments }}
       shell: bash
       env:
-        KRN_CORE_LOCATION: /opt/smallworld/krn_core-${{ inputs.krn-core-version }}
-        SMALLWORLD_GIS: /opt/smallworld/core
         GITHUB_WORKSPACE: ${{ github.workspace }}
     - name: Upload mMojo
       uses: actions/upload-artifact@v4
