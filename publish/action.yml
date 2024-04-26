@@ -1,0 +1,79 @@
+name: mMojo release
+description: compile a Smallworld product into a mMojo and publish it
+author: krn-sebastiaan
+branding:
+  icon: package
+  color: blue
+
+inputs:
+  krn-core-version:
+    default: 0.4.0+20240221-0755
+    required: false
+    type: string
+  build-xml-path:
+    default: build.xml
+    required: false
+    type: string
+  build-arguments:
+    default: ''
+    required: false
+    type: string
+  mmojo-name:
+    default: ${{ github.event.repository.name }}
+    required: false
+    type: string
+  krn-core-repository-url:
+    default: ''
+    required: false
+    type: string
+  gpg-passphrase:
+    required: true
+    type: string
+  publish-repository:
+    required: true
+    type: string
+  repository-name:
+    required: true
+    type: string
+  github_token:
+    required: true
+    type: string
+
+runs:
+  using: composite
+  steps:
+    - name: Compile
+      uses: krn-sebastiaan/actions/compile@main
+      with:
+        krn-core-version: ${{ inputs.krn-core-version }}
+        build-xml-path: ${{ inputs.build-xml-path }}
+        build-arguments: ${{ inputs.build-arguments }}
+        mmojo-name: ${{ inputs.mmojo-name }}
+        krn-core-repository-url: ${{ inputs.krn-core-repository-url }}
+        gpg-passphrase: ${{ inputs.gpg-passphrase }}
+    - name: Download mMojo
+      uses: actions/download-artifact@v4
+    - name: Checkout publish repository
+      uses: actions/checkout@v4
+      with:
+        repository: ${{ inputs.publish-repository }}
+        token: ${{ inputs.github_token }}
+        path: mmojo-store
+    - name: Publish mMojo
+      run: ant -f ${{ inputs.build-xml-path }} publish ${{ inputs.build-arguments }}
+      shell: bash
+      env:
+        upload_mojo: true
+        GITHUB_WORKSPACE: ${{ github.workspace }}
+        KRN_MOJO_UPLOAD_REPO: ${{ inputs.repository-name }}
+        KRN_REPOSITORY_FILE: "${{ github.workspace }}/mmojo-store/repositories.xml"
+    - name: Upload mMojo to store
+      working-directory: ./mmojo-store
+      run: |
+        git config user.name 'Github Action'
+        git config user.email 'action@github.com'
+        git add mojos.xml
+        git add "${{ inputs.mmojo-name}}/*.jar"
+        git commit -m "[${{ inputs.mmojo-name }}] Upload ${{ inputs.mmojo-name}}"
+        git push
+      shell: bash
