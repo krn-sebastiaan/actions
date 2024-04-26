@@ -30,7 +30,7 @@ inputs:
     required: true
     type: string
   tag-name:
-    default: ${{ github.ref }}
+    default: ${{ github.ref_name }}
     required: false
     type: string
 
