@@ -22,10 +22,6 @@ inputs:
     default: ${{ github.event.repository.name }}
     required: false
     type: string
-  krn-core-repository-url:
-    default: ''
-    required: false
-    type: string
   gpg-passphrase:
     required: true
     type: string
@@ -42,6 +38,12 @@ inputs:
 runs:
   using: composite
   steps:
+    - name: Checkout publish repository
+      uses: actions/checkout@v4
+      with:
+        repository: ${{ inputs.publish-repository }}
+        token: ${{ inputs.github_token }}
+        path: mmojo-store
     - name: Compile
       uses: krn-sebastiaan/actions/compile@main
       with:
@@ -49,16 +51,9 @@ runs:
         build-xml-path: ${{ inputs.build-xml-path }}
         build-arguments: ${{ inputs.build-arguments }}
         mmojo-name: ${{ inputs.mmojo-name }}
-        krn-core-repository-url: ${{ inputs.krn-core-repository-url }}
         gpg-passphrase: ${{ inputs.gpg-passphrase }}
-    - name: Download mMojo
-      uses: actions/download-artifact@v4
-    - name: Checkout publish repository
-      uses: actions/checkout@v4
-      with:
-        repository: ${{ inputs.publish-repository }}
-        token: ${{ inputs.github_token }}
-        path: mmojo-store
+      env:
+        KRN_REPOSITORY_FILE: "${{ github.workspace }}/mmojo-store/repositories.xml"
     - name: Publish mMojo
       run: ant -f ${{ inputs.build-xml-path }} publish ${{ inputs.build-arguments }}
       shell: bash
