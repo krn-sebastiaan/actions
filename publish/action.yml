@@ -31,30 +31,41 @@ inputs:
   repository-name:
     required: true
     type: string
-  github_token:
+  github-token:
     required: true
     type: string
 
 runs:
   using: composite
   steps:
+    - uses: actions/checkout@v4
+      with:
+        fetch-tags: 'true'
+        fetch-depth: 0
     - name: Checkout publish repository
       uses: actions/checkout@v4
       with:
         repository: ${{ inputs.publish-repository }}
-        token: ${{ inputs.github_token }}
+        token: ${{ inputs.github-token }}
         path: mmojo-store
         lfs: true
-    - name: Compile
-      uses: krn-sebastiaan/actions/compile@main
+    - name: Install SW Core, MUnit and KRN Core
+      uses: krn-sebastiaan/krn-core@main
       with:
-        krn-core-version: ${{ inputs.krn-core-version }}
-        build-xml-path: ${{ inputs.build-xml-path }}
-        build-arguments: ${{ inputs.build-arguments }}
-        mmojo-name: ${{ inputs.mmojo-name }}
         gpg-passphrase: ${{ inputs.gpg-passphrase }}
+        krn-core-version: ${{ inputs.krn-core-version }}
+    - name: Create mMojo
+      run: ant -f ${{ inputs.build-xml-path }} make_mojo ${{ inputs.build-arguments }}
+      shell: bash
       env:
+        GITHUB_WORKSPACE: ${{ github.workspace }}
         KRN_REPOSITORY_FILE: "${{ github.workspace }}/mmojo-store/repositories.xml"
+    - name: Upload mMojo
+      uses: actions/upload-artifact@v4
+      with:
+        name: ${{ inputs.mmojo-name }}
+        path: ${{ inputs.mmojo-name }}*.jar
+        if-no-files-found: error
     - name: Publish mMojo
       run: ant -f ${{ inputs.build-xml-path }} publish ${{ inputs.build-arguments }}
       shell: bash
