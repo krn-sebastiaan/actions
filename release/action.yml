@@ -47,7 +47,7 @@ runs:
         krn-core-repository-url: ${{ inputs.krn-core-repository-url }}
         gpg-passphrase: ${{ inputs.gpg-passphrase }}
     - name: Download mMojo
-      uses: actions/download-artifact@v4
+      uses: actions/download-artifact@v8
     - name: Release mMojo
       uses: softprops/action-gh-release@v2
       with:
