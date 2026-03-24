@@ -4,11 +4,41 @@ updates:
     directory: "/compile"
     schedule:
       interval: "monthly"
+    groups:
+      actions-checkout:
+        patterns:
+          - "actions/checkout"
+      actions-upload-artifact:
+        patterns:
+          - "actions/upload-artifact"
+      actions-download-artifact:
+        patterns:
+          - "actions/download-artifact"
   - package-ecosystem: "github-actions"
     directory: "/publish"
     schedule:
       interval: "monthly"
+    groups:
+      actions-checkout:
+        patterns:
+          - "actions/checkout"
+      actions-upload-artifact:
+        patterns:
+          - "actions/upload-artifact"
+      actions-download-artifact:
+        patterns:
+          - "actions/download-artifact"
   - package-ecosystem: "github-actions"
     directory: "/release"
     schedule:
       interval: "monthly"
+    groups:
+      actions-checkout:
+        patterns:
+          - "actions/checkout"
+      actions-upload-artifact:
+        patterns:
+          - "actions/upload-artifact"
+      actions-download-artifact:
+        patterns:
+          - "actions/download-artifact"
